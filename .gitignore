@@ -1,0 +1,14 @@
+# 忽略大文件和临时文件
+*.ply
+*.pt
+*.pth
+*.png
+*.jpg
+*.jpeg
+__pycache__/
+*.pyc
+.trae-cn/
+reference_images/
+mesh_output/
+mesh_output_7000/
+refined_mesh_output/
