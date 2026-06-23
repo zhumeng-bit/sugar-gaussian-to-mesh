@@ -2,6 +2,15 @@
 
 将 3D Gaussian Splatting 的结果转换为更容易进入传统三维资产管线的 mesh / textured mesh / refined Gaussian 输出。
 
+
+# SuGaR Pipeline - Gaussian Splatting to Mesh
+<a href="https://zhumeng-bit.github.io/sugar-gaussian-to-mesh/sugar-pipeline-docs/sugar-pipeline-docs.html" target="_blank">
+  <img src="https://img.shields.io/badge/在线完整文档-GitHub%20Pages-2ea44f?style=for-the-badge&logo=github" alt="Docs Site">
+</a>
+
+> PyTorch 2.6 + CUDA12.4 WSL2 高斯泼溅转网格完整流水线文档
+
+
 ## 快速开始
 
 ```bash
