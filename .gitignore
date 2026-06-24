@@ -16,3 +16,4 @@ train_mesh_output/
 .wslconfig
 SuGaR_Workspace/
 installers/
+*.pptx
