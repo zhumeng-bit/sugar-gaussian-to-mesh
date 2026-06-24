@@ -824,6 +824,56 @@ if obj and obj.type == 'MESH':
     print("Cleanup completed!")</code></pre>
   </section>
 
+  <!-- 13b. 后续管线接入 -->
+  <section id="pipeline_integration">
+    <h2>13.4 后续管线接入</h2>
+    <p>SuGaR 输出的 mesh 可以接入以下传统三维资产管线：</p>
+
+    <h3>骨骼绑定</h3>
+    <div class="table-wrap"><table>
+      <tr><th>步骤</th><th>操作</th><th>注意事项</th></tr>
+      <tr><td>1. 清理 mesh</td><td>删除松散元素、填充孔洞</td><td>确保 mesh 是流形（manifold）</td></tr>
+      <tr><td>2. 减面</td><td>Decimate 到目标面数</td><td>绑定建议 &lt; 50K 面</td></tr>
+      <tr><td>3. 拓扑检查</td><td>检查 non-manifold 边</td><td>绑定前必须修复</td></tr>
+      <tr><td>4. 创建骨骼</td><td>Armature → Auto-Rig</td><td>使用 decim200000 版本</td></tr>
+      <tr><td>5. 权重绑定</td><td>Automatic Weights</td><td>检查权重分布</td></tr>
+    </table></div>
+
+    <h3>动画驱动</h3>
+    <ul>
+      <li>使用低面数版本（<code>decim200000.ply</code>）进行动画</li>
+      <li>在 Blender 中创建 NLA Strip 或 Action</li>
+      <li>导出为 FBX/GLB 格式供游戏引擎使用</li>
+    </ul>
+
+    <h3>游戏引擎导入</h3>
+    <div class="table-wrap"><table>
+      <tr><th>引擎</th><th>导入格式</th><th>操作</th></tr>
+      <tr><td>Unreal Engine 5</td><td>FBX 或 OBJ</td><td>Import → Create Blueprint</td></tr>
+      <tr><td>Unity</td><td>FBX 或 OBJ</td><td>拖入 Assets 目录</td></tr>
+      <tr><td>Godot</td><td>GLB 或 OBJ</td><td>Import Scene</td></tr>
+    </table></div>
+
+    <h3>几何检查自动化</h3>
+    <div class="cmd-label">PYTHON</div>
+    <pre><code>import trimesh
+
+mesh = trimesh.load("truck.obj")
+
+# 流形检查
+print("Is watertight:", mesh.is_watertight)
+print("Is watertight:", mesh.is_watertight)
+print("Euler number:", mesh.euler_number)
+print("Faces:", len(mesh.faces))
+print("Bounds:", mesh.bounds)
+
+# 法线检查
+print("Vertex normals:", mesh.vertex_normals.shape)
+
+# 自相交检查
+print("Self intersections:", len(mesh.face_adjacency_angle))</code></pre>
+  </section>
+
   <!-- 14. Troubleshooting -->
   <section id="troubleshoot">
     <h2>14. 常见问题</h2>

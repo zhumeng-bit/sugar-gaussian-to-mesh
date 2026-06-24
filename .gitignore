@@ -12,3 +12,7 @@ reference_images/
 mesh_output/
 mesh_output_7000/
 refined_mesh_output/
+train_mesh_output/
+.wslconfig
+SuGaR_Workspace/
+installers/
