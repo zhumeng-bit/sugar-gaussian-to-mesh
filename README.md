@@ -49,7 +49,7 @@ bash full_pipeline.sh /path/to/scene_data
 ## 已验证场景
 
 - [x] Tanks & Temples - truck
-- [ ] Tanks & Temples - train (进行中)
+- [x] Tanks & Temples - train
 
 ## 参考
 
