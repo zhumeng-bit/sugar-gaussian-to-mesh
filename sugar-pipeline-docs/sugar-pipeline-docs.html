@@ -6,38 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SuGaR Pipeline - Gaussian to Mesh 转换接口文档</title>
   <style>
-    @font-face {
-      font-family: 'NotoSansCJK';
-      src: url('./_shared/fonts/NotoSansCJKsc-Regular.otf') format('opentype');
-      font-weight: 400;
-    }
-    @font-face {
-      font-family: 'NotoSansCJK';
-      src: url('./_shared/fonts/NotoSansCJKsc-Bold.otf') format('opentype');
-      font-weight: 700;
-    }
-    @font-face {
-      font-family: 'JetBrainsMono';
-      src: url('./_shared/fonts/JetBrainsMono-Regular.ttf') format('truetype');
-      font-weight: 400;
-    }
-  </style>
-  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap');
+
     :root {
-      --bg: #0f1117;
-      --bg2: #1a1d27;
-      --bg3: #242836;
-      --ink: #e4e4e7;
-      --muted: #8b8fa3;
-      --rule: #2e3348;
-      --accent: #60a5fa;
-      --accent2: #a78bfa;
-      --green: #34d399;
-      --orange: #fb923c;
-      --red: #f87171;
-      --font: 'NotoSansCJK', system-ui, sans-serif;
-      --font-mono: 'JetBrainsMono', monospace;
-      --max: 960px;
+      --bg: #f8fafb;
+      --bg2: #ffffff;
+      --bg3: #f1f5f9;
+      --ink: #1e293b;
+      --muted: #64748b;
+      --rule: #e2e8f0;
+      --accent: #0f766e;
+      --accent-light: #ccfbf1;
+      --accent2: #7c3aed;
+      --green: #059669;
+      --green-light: #ecfdf5;
+      --orange: #d97706;
+      --orange-light: #fffbeb;
+      --red: #dc2626;
+      --red-light: #fef2f2;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'Source Code Pro', 'JetBrainsMono', monospace;
+      --max: 920px;
+      --radius: 10px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 15px; scroll-behavior: smooth; }
@@ -48,20 +40,32 @@
       line-height: 1.7;
       padding: 2rem 1rem;
     }
+    /* Subtle grid bg */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(15,118,110,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,118,110,0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      z-index: -1;
+    }
     article.page { max-width: var(--max); margin: 0 auto; }
 
     /* Header */
     .doc-header {
       text-align: center;
-      padding: 3rem 0 2rem;
+      padding: 2.5rem 0 2rem;
       border-bottom: 1px solid var(--rule);
       margin-bottom: 2rem;
     }
     .doc-header h1 {
       font-size: 2rem;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--ink);
       margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
     }
     .doc-header .subtitle {
       color: var(--muted);
@@ -70,28 +74,35 @@
     .doc-header .meta {
       margin-top: 1rem;
       font-size: 0.8rem;
-      color: var(--muted);
     }
     .doc-header .meta span {
       display: inline-block;
       background: var(--bg3);
+      color: var(--muted);
       padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-      margin: 0.2rem;
+      border-radius: 6px;
+      margin: 0.15rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
     }
 
     /* TOC */
     .toc {
       background: var(--bg2);
       border: 1px solid var(--rule);
-      border-radius: 8px;
+      border-radius: var(--radius);
       padding: 1.5rem 2rem;
       margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
     }
     .toc h2 {
-      font-size: 1rem;
+      font-size: 0.95rem;
       color: var(--accent);
       margin-bottom: 0.8rem;
+      font-weight: 600;
+      border: none;
+      padding: 0;
     }
     .toc ul { list-style: none; }
     .toc li { margin-bottom: 0.3rem; }
@@ -99,6 +110,7 @@
       color: var(--ink);
       text-decoration: none;
       font-size: 0.9rem;
+      transition: color 0.15s;
     }
     .toc a:hover { color: var(--accent); }
     .toc .indent { padding-left: 1.5rem; }
@@ -106,16 +118,17 @@
     /* Sections */
     section { margin-bottom: 2.5rem; }
     h2 {
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--ink);
       padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--rule);
+      border-bottom: 2px solid var(--accent);
       margin-bottom: 1rem;
+      letter-spacing: -0.01em;
     }
     h3 {
       font-size: 1.05rem;
-      font-weight: 700;
+      font-weight: 600;
       color: var(--accent2);
       margin: 1.2rem 0 0.6rem;
     }
@@ -133,34 +146,39 @@
       font-size: 0.85rem;
       background: var(--bg3);
       padding: 0.15rem 0.4rem;
-      border-radius: 3px;
-      color: var(--green);
+      border-radius: 4px;
+      color: var(--accent);
+      font-weight: 500;
     }
     pre {
-      background: var(--bg2);
-      border: 1px solid var(--rule);
-      border-radius: 6px;
+      background: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      border-radius: var(--radius);
       padding: 1rem 1.2rem;
       overflow-x: auto;
       margin: 0.8rem 0 1.2rem;
       font-size: 0.82rem;
-      line-height: 1.5;
+      line-height: 1.6;
+      box-shadow: var(--shadow);
     }
     pre code {
       background: none;
       padding: 0;
-      color: var(--ink);
+      color: #e2e8f0;
+      font-weight: 400;
     }
     .cmd-label {
       display: inline-block;
       background: var(--accent);
-      color: var(--bg);
+      color: white;
       font-size: 0.7rem;
-      font-weight: 700;
-      padding: 0.1rem 0.5rem;
-      border-radius: 3px;
+      font-weight: 600;
+      padding: 0.15rem 0.55rem;
+      border-radius: 5px;
       margin-bottom: 0.4rem;
       font-family: var(--font-mono);
+      letter-spacing: 0.02em;
     }
 
     /* Tables */
@@ -173,6 +191,11 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 0.85rem;
+      background: var(--bg2);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
     }
     th {
       background: var(--bg3);
@@ -181,30 +204,44 @@
       text-align: left;
       padding: 0.6rem 0.8rem;
       border-bottom: 2px solid var(--rule);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
     td {
       padding: 0.5rem 0.8rem;
       border-bottom: 1px solid var(--rule);
       color: var(--ink);
     }
-    tr:hover td { background: var(--bg2); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
 
     /* Callouts */
     .callout {
       border-left: 4px solid var(--accent);
-      background: var(--bg2);
+      background: var(--accent-light);
       padding: 0.8rem 1rem;
-      border-radius: 0 6px 6px 0;
+      border-radius: 0 var(--radius) var(--radius) 0;
       margin: 0.8rem 0;
       font-size: 0.9rem;
+      color: #115e59;
     }
-    .callout.warn { border-left-color: var(--orange); }
-    .callout.error { border-left-color: var(--red); }
-    .callout.ok { border-left-color: var(--green); }
-    .callout strong { color: var(--accent); }
-    .callout.warn strong { color: var(--orange); }
-    .callout.error strong { color: var(--red); }
-    .callout.ok strong { color: var(--green); }
+    .callout.warn {
+      border-left-color: var(--orange);
+      background: var(--orange-light);
+      color: #92400e;
+    }
+    .callout.error {
+      border-left-color: var(--red);
+      background: var(--red-light);
+      color: #991b1b;
+    }
+    .callout.ok {
+      border-left-color: var(--green);
+      background: var(--green-light);
+      color: #065f46;
+    }
+    .callout strong { color: inherit; }
 
     /* Pipeline diagram */
     .pipeline {
@@ -215,13 +252,14 @@
       align-items: center;
     }
     .pipeline .step {
-      background: var(--bg3);
+      background: var(--bg2);
       border: 1px solid var(--rule);
       padding: 0.6rem 1rem;
-      border-radius: 6px;
+      border-radius: var(--radius);
       text-align: center;
       min-width: 120px;
       font-size: 0.85rem;
+      box-shadow: var(--shadow-sm);
     }
     .pipeline .step .label {
       font-weight: 600;
@@ -233,25 +271,27 @@
       font-size: 0.75rem;
     }
     .pipeline .arrow {
-      color: var(--muted);
+      color: var(--rule);
       font-size: 1.2rem;
       padding: 0 0.3rem;
     }
 
     /* File tree */
     .file-tree {
-      background: var(--bg2);
-      border: 1px solid var(--rule);
-      border-radius: 6px;
+      background: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      border-radius: var(--radius);
       padding: 1rem 1.2rem;
       font-family: var(--font-mono);
       font-size: 0.82rem;
       line-height: 1.8;
       margin: 0.8rem 0 1.2rem;
+      box-shadow: var(--shadow);
     }
-    .file-tree .dir { color: var(--accent); font-weight: 600; }
-    .file-tree .file { color: var(--ink); }
-    .file-tree .comment { color: var(--muted); }
+    .file-tree .dir { color: #5eead4; font-weight: 600; }
+    .file-tree .file { color: #cbd5e1; }
+    .file-tree .comment { color: #64748b; }
 
     /* Status badges */
     .badge {
@@ -259,12 +299,12 @@
       font-size: 0.7rem;
       font-weight: 600;
       padding: 0.15rem 0.5rem;
-      border-radius: 3px;
+      border-radius: 5px;
     }
-    .badge-ok { background: #065f46; color: var(--green); }
-    .badge-warn { background: #78350f; color: var(--orange); }
-    .badge-err { background: #7f1d1d; color: var(--red); }
-    .badge-info { background: #1e3a5f; color: var(--accent); }
+    .badge-ok { background: var(--green-light); color: var(--green); }
+    .badge-warn { background: var(--orange-light); color: var(--orange); }
+    .badge-err { background: var(--red-light); color: var(--red); }
+    .badge-info { background: var(--accent-light); color: var(--accent); }
 
     /* Footer */
     footer {
@@ -273,6 +313,7 @@
       margin-top: 3rem;
       font-size: 0.8rem;
       color: var(--muted);
+      text-align: center;
     }
 
     /* Responsive */
